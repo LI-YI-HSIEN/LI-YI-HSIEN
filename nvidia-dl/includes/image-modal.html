@@ -1,0 +1,29 @@
+<!--image-modal.html-->
+<div class="image-gallery-item">
+    <figure class="figure thumbnail-wrapper" data-bs-toggle="modal" data-bs-target="#modal-{{id}}">
+        <div class="image-container">
+            <img src="../images/{{chapter}}/{{filename}}" alt="{{alt}}" class="figure-img img-fluid rounded thumbnail">
+        </div>
+        <figcaption class="figure-caption text-center">
+            圖 {{figure-number}}：{{caption}}<br>
+            (點擊展開)
+        </figcaption>
+    </figure>
+
+    <div class="modal fade" id="modal-{{id}}" tabindex="-1" aria-labelledby="modalLabel-{{id}}" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel-{{id}}">{{description}}</h5> <!-- ✅ 這裡改成 description -->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="../images/{{chapter}}/{{filename}}" alt="{{alt}}" class="img-fluid modal-image">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

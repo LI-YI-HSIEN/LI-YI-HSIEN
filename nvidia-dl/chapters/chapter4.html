@@ -1,0 +1,478 @@
+<!-- /chapters/chapter4.html -->
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卷積神經網路(CNN)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="../js/sidebar-data.js"></script>
+    <script src="../js/sidebar.js"></script>
+    <script src="../js/image-handler.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+    <style>
+        /* 最高優先級的選擇器 */
+        div.container>section>h2,
+        div.container>section>h3 {
+            font-family: "PingFang TC", "Microsoft JhengHei", "微軟正黑體", sans-serif !important;
+            font-weight: 500 !important;
+            letter-spacing: 1px !important;
+        }
+
+        /* 主標題 */
+        div.container>section>h2 {
+            font-size: 2rem !important;
+            color: #333 !important;
+            margin-bottom: 1.5rem !important;
+        }
+
+        /* 次標題 */
+        div.container>section>h3 {
+            font-size: 1.5rem !important;
+            color: #333 !important;
+            margin-top: 2rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        /* 針對所有標題的通用樣式 */
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: "PingFang TC", "Microsoft JhengHei", "微軟正黑體", sans-serif !important;
+        }
+
+        /* 重點區塊樣式 */
+        .key-point {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* 卡片樣式 - 無捲軸版 */
+        .auto-height-card {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            min-height: 200px;
+            /* 設定最小高度 */
+            height: auto;
+            /* 自動調整高度 */
+        }
+
+        /* 確保左右框同高 */
+        .equal-height-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .equal-height-container>div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .equal-height-container .auto-height-card {
+            flex-grow: 1;
+        }
+
+        /* 圖片容器樣式 */
+        .image-container {
+            margin-top: 20px;
+        }
+
+        /* Colab按鈕樣式 */
+        .colab-button {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .colab-button:hover {
+            background-color: #3367D6;
+            color: white;
+        }
+
+        .colab-button i {
+            margin-right: 8px;
+        }
+
+        /* 實作說明區塊 */
+        .implementation-note {
+            background-color: #e9f7fe;
+            border-left: 4px solid #4285F4;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 側邊欄 -->
+            <aside id="sidebar-placeholder" class="col-md-3 col-lg-2 p-0">
+            </aside>
+
+            <!-- 主要內容區 -->
+            <main class="col-md-9 col-lg-10 p-4">
+                <div class="container">
+                    <section id="chapter4">
+                        <h2>4. 卷積神經網路(CNN)</h2>
+                        <div class="alert alert-info mt-3">
+                            <p>本章重點：</p>
+                            <ul>
+                                <li>理解卷積層的基本概念與運作原理</li>
+                                <li>掌握CNN的架構設計與各層組件功能</li>
+                                <li>了解CNN在圖像處理上的突破與應用</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section id="cnn-basics">
+                        <h3>4.1 卷積神經網路的基礎</h3>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <!-- 藍色左邊框區塊 -->
+                                <div class="key-point">
+                                    <h4>CNN模型簡介</h4>
+                                    <p>
+                                        卷積神經網路(CNN)是一種專為處理具有網格結構的資料(如圖像)而設計的深度學習架構。
+                                        其核心概念是透過卷積層自動學習特徵提取濾鏡，模擬人類視覺系統對圖像的層次化處理方式。
+                                        CNN在圖像分類、物體偵測等視覺任務上表現優異，成為電腦視覺領域的基礎技術。
+                                        隨著AlexNet、VGG、GoogLeNet和ResNet等架構的發展，CNN不斷突破性能極限，
+                                        為人工智慧帶來革命性的進步。
+                                    </p>
+                                </div>
+
+                                <div class="row equal-height-container">
+                                    <div class="col-md-6">
+                                        <h4>卷積運算原理</h4>
+                                        <div class="auto-height-card" id="cnn-principle">
+                                            <ul>
+                                                <li><strong>核心概念</strong>
+                                                    <ul>
+                                                        <li>卷積核(濾鏡)：用於特徵提取的權重矩陣</li>
+                                                        <li>步長(stride)：控制濾鏡移動的距離</li>
+                                                        <li>填充(padding)：解決邊界處理問題</li>
+                                                        <li>特徵圖(feature map)：卷積操作產生的輸出</li>
+                                                    </ul>
+                                                </li>
+                                                <li><strong>運作流程</strong>
+                                                    <ul>
+                                                        <li>濾鏡在輸入上滑動並計算內積</li>
+                                                        <li>透過激活函數(如ReLU)引入非線性</li>
+                                                        <li>池化層降低尺寸並保留主要特徵</li>
+                                                        <li>多層堆疊學習層次化特徵表示</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <h4>CNN結構組件</h4>
+                                        <div class="auto-height-card" id="cnn-components">
+                                            <ul>
+                                                <li><strong>必要層類型</strong>
+                                                    <ul>
+                                                        <li>卷積層：負責特徵提取與模式識別</li>
+                                                        <li>池化層：降低特徵圖尺寸與計算量</li>
+                                                        <li>全連接層：整合特徵執行最終分類</li>
+                                                    </ul>
+                                                </li>
+                                                <li><strong>輔助設計</strong>
+                                                    <ul>
+                                                        <li>Dropout層：隨機關閉神經元防止過擬合</li>
+                                                        <li>批次正規化：加速訓練與穩定學習</li>
+                                                        <li>殘差連接：解決深層網路梯度消失問題</li>
+                                                        <li>1x1卷積：降低計算成本與調整通道數</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="image-container mt-4">
+                                    <div class="image-row">
+                                        <div data-image-container data-image-id="4-1" data-chapter="chapter4"
+                                            data-filename="4-1-alex.png" data-alt="AlexNet架構圖" data-figure-number="4-1"
+                                            data-caption="AlexNet整體架構"
+                                            data-description="詳細呈現AlexNet的各層配置，包含卷積層、池化層和密集層的排列組合">
+                                        </div>
+                                        <div data-image-container data-image-id="4-2" data-chapter="chapter4"
+                                            data-filename="4-2-cnn-architecture.png" data-alt="CNN特徵提取與分類"
+                                            data-figure-number="4-2" data-caption="CNN特徵提取與分類"
+                                            data-description="CNN架構：從底部輸入圖片開始，經過卷積層提取基本特徵（如：垂直線等），然後提取更高層特徵（如尾等），最後經密集層用Softmax進行多分類（如狗等類別）">
+                                        </div>
+                                        <div data-image-container data-image-id="4-3" data-chapter="chapter4"
+                                            data-filename="4-3-cnn-strides.png" data-alt="卷積核與步長示意圖"
+                                            data-figure-number="4-3" data-caption="卷積核與步長示意圖"
+                                            data-description="三種不同卷積核配置：2x2卷積核配合步長1、2x2卷積核配合步長2，以及3x3卷積核配合步長2，說明不同參數設置對特徵提取的影響">
+                                        </div>
+                                        <div data-image-container data-image-id="4-4" data-chapter="chapter4"
+                                            data-filename="4-4-cnn-feature.png" data-alt="卷積特徵提取示意圖"
+                                            data-figure-number="4-4" data-caption="卷積核特徵提取示意圖"
+                                            data-description="使用4個不同的卷積核(或稱濾鏡)從輸入圖片中提取不同方向的線條特徵，包括垂直線、水平線和兩種不同角度的對角線">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <br>
+                                    <h4>基礎CNN圖像分類實作</h4>
+                                    <div class="key-point">
+                                        <h5>範例：CIFAR-10圖像分類</h5>
+                                        <ul>
+                                            <li><strong>核心功能</strong>：
+                                                <ul>
+                                                    <li>建立基礎CNN模型分類CIFAR-10數據集(10類別)</li>
+                                                    <li>使用兩層卷積網路進行特徵提取</li>
+                                                    <li>實現圖像標準化和資料預處理</li>
+                                                    <li>透過模型預測功能識別自定義圖片</li>
+                                                </ul>
+                                            </li>
+                                            <li><strong>技術實現</strong>：
+                                                <ul>
+                                                    <li>模型架構：兩層卷積層(64個濾鏡)配合全連接輸出層</li>
+                                                    <li>資料處理：透過均值和標準差進行標準化</li>
+                                                    <li>優化策略：使用Adam優化器和類別交叉熵損失函數</li>
+                                                    <li>訓練配置：批次大小32，訓練128個epoch</li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        <p>
+                                            <a href="https://colab.research.google.com/drive/12mTlj9RNSHixd4jJUNLKTe6Xdm5cV8T6#scrollTo=1SyMSgOT5VSD"
+                                                target="_blank" class="colab-button">
+                                                <i class="bi bi-code-square"></i> run CNN CIFAR-10 on Colab
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="deeper-cnn">
+                        <h3>4.2 更深層的CNN架構</h3>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <!-- 藍色左邊框區塊 -->
+                                <div class="key-point">
+                                    <h4>深層CNN架構簡介</h4>
+                                    <p>
+                                        隨著研究進展，CNN架構不斷向更深、更寬的方向發展。VGGNet以其規則的模組化設計和統一的3x3卷積核選擇，
+                                        證明了深度對模型性能的重要性；GoogLeNet透過Inception模組引入多尺度特徵提取，同時使用1x1卷積減少計算量；
+                                        而ResNet則通過殘差連接解決了深層網路的退化問題，實現了超過100層的超深架構。這些創新不僅提升了模型性能，
+                                        也形成了現代CNN設計的基本原則和方法論。
+                                    </p>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h4>CNN架構演進與關鍵創新</h4>
+                                        <div class="auto-height-card" id="cnn-evolution">
+                                            <ul>
+                                                <li><strong>VGGNet (2014)</strong>
+                                                    <ul>
+                                                        <li><strong>架構特點</strong>：統一使用3x3卷積核堆疊，16層和19層兩種配置</li>
+                                                        <li><strong>關鍵創新</strong>：證明更深的網路能提升性能，簡潔且規則的層次設計</li>
+                                                        <li><strong>限制</strong>：參數量大，計算成本高，訓練耗時</li>
+                                                        <li><strong>影響</strong>：為後續深層CNN奠定基礎，展示了深度的重要性</li>
+                                                    </ul>
+                                                </li>
+                                                <li><strong>GoogLeNet (2014)</strong>
+                                                    <ul>
+                                                        <li><strong>架構特點</strong>：22層深度但參數量比VGG少，引入Inception模組</li>
+                                                        <li><strong>關鍵創新</strong>：Inception模組並行使用1x1、3x3、5x5卷積擷取多尺度特徵
+                                                        </li>
+                                                        <li><strong>效率提升</strong>：使用1x1卷積降維大幅減少計算量和參數數量</li>
+                                                        <li><strong>技術解決</strong>：加入輔助分類器解決深層網路的梯度消失問題</li>
+                                                    </ul>
+                                                </li>
+                                                <li><strong>ResNet (2015)</strong>
+                                                    <ul>
+                                                        <li><strong>架構特點</strong>：實現152層的超深架構，性能突破人類水平</li>
+                                                        <li><strong>殘差學習</strong>：引入跳接結構(Skip
+                                                            Connection)，學習F(x)+x而非直接學習F(x)</li>
+                                                        <li><strong>技術解決</strong>：有效解決深層網路的梯度消失和退化問題</li>
+                                                        <li><strong>結構設計</strong>：在深層版本中使用1x1降維→3x3處理→1x1升維的結構，減少計算成本
+                                                        </li>
+                                                        <li><strong>突破</strong>：使超過100層的超深網路訓練成為可能，重新定義CNN深度極限</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="image-container mt-4">
+                                    <div class="image-row">
+                                        <div data-image-container data-image-id="4-5" data-chapter="chapter4"
+                                            data-filename="4-5-vggnet.png" data-alt="VGG模組運算示意圖"
+                                            data-figure-number="4-5" data-caption="VGG模組詳細架構"
+                                            data-description="VGG模組的完整架構：從8×6×3輸入開始，通過兩個3×3卷積（步長1，4個卷積核）和一個2×2池化（步長2）層，並說明padding的使用和特徵圖尺寸的變化">
+                                        </div>
+                                        <div data-image-container data-image-id="4-6" data-chapter="chapter4"
+                                            data-filename="4-6-inception.png" data-alt="Inception模組演進"
+                                            data-figure-number="4-6" data-caption="Inception模組演進"
+                                            data-description="GoogleNet Inception模組的原始版本和改良版本：原版使用通道串接(concatenation)合併不同卷積結果，改良版加入1x1卷積來降低計算複雜度">
+                                        </div>
+                                        <div data-image-container data-image-id="4-7" data-chapter="chapter4"
+                                            data-filename="4-7-googlenet.png" data-alt="GoogleNet網路架構圖"
+                                            data-figure-number="4-7" data-caption="GoogleNet整體架構"
+                                            data-description="GoogleNet的完整網路架構：從輸入開始，經過卷積層、多個Inception模組和最大池化層，並在中間層加入兩個輔助分類器，最終輸出分類結果">
+                                        </div>
+                                        <div data-image-container data-image-id="4-8" data-chapter="chapter4"
+                                            data-filename="4-8-resnet.png" data-alt="ResNet殘差模組架構圖"
+                                            data-figure-number="4-8" data-caption="ResNet殘差模組架構"
+                                            data-description="ResNet的基本架構：包含四組殘差模組，每組都有跳接連接，每兩層卷積為一組，使用3x3卷積核，通道數從64遞增到128，最後通過密集層和Softmax進行分類">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <br>
+                                    <h4>深層CNN模型實作</h4>
+                                    <div class="key-point">
+                                        <h5>範例：進階CNN分類模型</h5>
+                                        <ul>
+                                            <li><strong>核心功能</strong>：
+                                                <ul>
+                                                    <li>實現更深層的CNN架構提升分類性能</li>
+                                                    <li>引入Dropout和MaxPooling防止過擬合</li>
+                                                    <li>使用多層卷積和全連接層設計</li>
+                                                    <li>同樣實現自定義圖片的分類預測</li>
+                                                </ul>
+                                            </li>
+                                            <li><strong>架構設計</strong>：
+                                                <ul>
+                                                    <li>四層卷積層：使用不同大小的濾鏡(4x4, 2x2, 3x3)</li>
+                                                    <li>Dropout層：每層後添加20%的Dropout防止過擬合</li>
+                                                    <li>MaxPooling層：減少特徵圖尺寸，保留重要特徵</li>
+                                                    <li>雙層全連接層：64個神經元進行特徵整合</li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        <p>
+                                            <a href="https://colab.research.google.com/drive/1e4a5Jb4fC5ei2CLPn2SNS-2JQXgZQSaZ#scrollTo=XnmPV4p68oPI"
+                                                target="_blank" class="colab-button">
+                                                <i class="bi bi-code-square"></i> run CNN CIFAR-10 on Colab
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="advanced-cnn">
+                        <h3>4.3 遷移學習與預訓練模型</h3>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <!-- 藍色左邊框區塊 -->
+                                <div class="key-point">
+                                    <h4>遷移學習簡介</h4>
+                                    <p>
+                                        遷移學習是利用在大規模資料集上預訓練的模型來解決新的相關任務，特別適用於目標任務的訓練數據有限的情況。
+                                        這種方法基於一個關鍵洞見：CNN的淺層捕捉基本視覺特徵(如邊緣、紋理)，這些特徵通常適用於多種視覺任務。
+                                        通過微調(fine-tuning)預訓練模型，可以顯著減少訓練時間和數據需求，同時保持或提高模型性能。
+                                        在實際應用中，遷移學習已成為解決實際視覺問題的標準方法，特別是在資源有限的場景。
+                                    </p>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h4>遷移學習技術</h4>
+                                        <div class="auto-height-card" id="transfer-learning">
+                                            <ul>
+                                                <li><strong>遷移學習策略</strong>
+                                                    <ul>
+                                                        <li><strong>特徵提取(Feature
+                                                                Extraction)</strong>：凍結預訓練網路所有層，僅訓練新添加的分類層，適合小數據集</li>
+                                                        <li><strong>微調(Fine-tuning)</strong>：凍結部分底層，解凍部分上層，使用較小學習率訓練，適合中等數據集
+                                                        </li>
+                                                        <li><strong>完全微調</strong>：解凍預訓練網路的所有層，使用極小學習率訓練，適合大型數據集</li>
+                                                    </ul>
+                                                </li>
+                                                <li><strong>ResNet50預訓練模型應用</strong>
+                                                    <ul>
+                                                        <li>50層深度的殘差網路，在ImageNet上預訓練(1000類)</li>
+                                                        <li>通過Keras API輕鬆載入並使用，無需自行訓練</li>
+                                                        <li>能夠直接用於圖像分類、特徵提取等任務</li>
+                                                        <li>良好的性能與計算成本平衡，廣泛應用於實際項目</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="image-container mt-4">
+                                    <div class="image-row">
+                                        <div data-image-container data-image-id="4-9" data-chapter="chapter4"
+                                            data-filename="4-9-transfer-learning.png" data-alt="遷移學習示意圖"
+                                            data-figure-number="4-9" data-caption="遷移學習應用方式"
+                                            data-description="GoogLeNet的遷移學習：左側為原始模型(1000類別)，右側為遷移到新任務(10類別)，保留預訓練的特徵提取層，只替換最後的分類層">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <br>
+                                    <h4>預訓練模型Inference實作</h4>
+                                    <div class="key-point">
+                                        <h5>範例：使用ResNet50進行圖像分類</h5>
+                                        <ul>
+                                            <li><strong>核心功能</strong>：
+                                                <ul>
+                                                    <li>利用預訓練的ResNet50模型進行圖像分類</li>
+                                                    <li>無需重新訓練即可識別1000種不同類別</li>
+                                                    <li>展示遷移學習在實際應用中的便利性</li>
+                                                </ul>
+                                            </li>
+                                            <li><strong>實作重點</strong>：
+                                                <ul>
+                                                    <li>從Keras直接載入預訓練的ResNet50模型</li>
+                                                    <li>進行圖像預處理：調整尺寸、轉換為陣列、標準化</li>
+                                                    <li>使用模型進行推理預測並解碼結果</li>
+                                                    <li>視覺化展示預測結果</li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        <p>
+                                            <a href="https://colab.research.google.com/drive/16YNbZbtzD98S4K8pk2BmCDmxRgAP1jdJ#scrollTo=RXD6mV2DwlzG"
+                                                target="_blank" class="colab-button">
+                                                <i class="bi bi-code-square"></i> run ResNet50 Inference on Colab
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="../js/sidebar-data.js"></script>
+    <script src="../js/sidebar.js"></script>
+    <script src="../js/image-handler.js"></script>
+</body>
+
+</html>

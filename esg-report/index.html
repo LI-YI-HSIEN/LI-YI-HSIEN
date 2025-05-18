@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <!-- 首先添加這段樣式到 <head> 區塊內 -->
+    <style>
+        /* 其他現有的樣式保持不變 */
+
+        /* 返回按鈕樣式 */
+        .back-to-home-container {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            /* 確保按鈕在最上層 */
+        }
+
+        .back-to-home {
+            background-color: #0b985d;
+            color: white;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-to-home:hover {
+            background-color: #0a58ca;
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-to-home i {
+            margin-left: 8px;
+            font-size: 1.1em;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>醫院ESG報告生成器</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="back-to-home-container">
+        <a href="../index.html" class="back-to-home">
+            返回作品集首頁 <i class="fa fa-arrow-right"></i>
+        </a>
+    </div>
+    <!-- 返回按鈕 - 固定在右上角 -->
+    <div class="container">
+        <header>
+            <h1>醫院ESG報告生成器</h1>
+            <p>透過填寫以下資訊，快速生成符合GRI與SASB標準的醫院永續報告第一章</p>
+        </header>
+
+        <div class="progress-bar">
+            <div class="step active" data-step="1"></div>
+            <div class="step" data-step="2"></div>
+            <div class="step" data-step="3"></div>
+            <div class="step" data-step="4"></div>
+            <div class="step" data-step="5"></div>
+        </div>
+
+        <form id="esgForm">
+            <!-- 第1頁：報告書基本資訊 (GRI 2-3) -->
+            <div class="form-page active" id="page1">
+                <h2>報告書基本資訊 <span class="standard-badge">GRI 2-3</span></h2>
+                <p class="section-description">依據GRI 2-3（報告期間與發布頻率）標準提供報告基本資訊</p>
+
+                <div class="form-group">
+                    <label for="reportPeriodStart">報導期間 (起始日期):</label>
+                    <input type="date" id="reportPeriodStart" name="reportPeriodStart" required>
+                    <small class="helper-text">例如：2023年1月1日</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="reportPeriodEnd">報導期間 (結束日期):</label>
+                    <input type="date" id="reportPeriodEnd" name="reportPeriodEnd" required>
+                    <small class="helper-text">例如：2023年12月31日</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="issueNumber">這是第幾次發行永續報告:</label>
+                    <select id="issueNumber" name="issueNumber" required>
+                        <option value="">請選擇</option>
+                        <option value="1">第1次</option>
+                        <option value="2">第2次</option>
+                        <option value="3">第3次</option>
+                        <option value="4">第4次</option>
+                        <option value="5">第5次以上</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="frequency">未來預計發行頻率:</label>
+                    <select id="frequency" name="frequency" required>
+                        <option value="">請選擇</option>
+                        <option value="annually">每年一次</option>
+                        <option value="biannually">每兩年一次</option>
+                        <option value="triennially">每三年一次</option>
+                        <option value="undecided">尚未決定</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>報告採用的標準 (可複選):</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="standards" value="GRI"> GRI通用準則 2021</label>
+                        <label><input type="checkbox" name="standards" value="SASB"> SASB醫療照護服務標準 (HC-DY)</label>
+                        <label><input type="checkbox" name="standards" value="SDGs"> SDGs永續發展目標</label>
+                        <label><input type="checkbox" name="standards" value="Other"> 其他
+                            <input type="text" id="otherStandard" name="otherStandard" placeholder="請說明">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="externalVerification">是否有外部單位進行報告查證: <span class="standard-badge">GRI 2-5</span></label>
+                    <select id="externalVerification" name="externalVerification" required>
+                        <option value="">請選擇</option>
+                        <option value="yes">是</option>
+                        <option value="no">否</option>
+                        <option value="planning">規劃中</option>
+                    </select>
+                    <small class="helper-text">GRI 2-5 要求說明組織是否尋求外部保證/確信</small>
+                </div>
+
+                <div class="form-group verification-details" style="display: none;">
+                    <label for="verificationOrg">查證單位名稱:</label>
+                    <input type="text" id="verificationOrg" name="verificationOrg" placeholder="例如：SGS Taiwan Ltd.">
+
+                    <label for="verificationStandard">查證標準:</label>
+                    <input type="text" id="verificationStandard" name="verificationStandard"
+                        placeholder="例如: AA1000 AS v3第一類型中度保證等級">
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="next-btn">下一步</button>
+                </div>
+            </div>
+
+            <!-- 第2頁：醫院歷史與概況 (GRI 2-1) -->
+            <div class="form-page" id="page2">
+                <h2>醫院歷史與概況 <span class="standard-badge">GRI 2-1</span> <span
+                        class="standard-badge">HC-DY-000.A/B</span></h2>
+                <p class="section-description">依據GRI 2-1標準提供組織詳細資訊，以及SASB HC-DY-000.A/B指標的服務數據</p>
+
+                <div class="form-group">
+                    <label for="hospitalName">醫院名稱: <span class="standard-badge">GRI 2-1.a.i</span></label>
+                    <input type="text" id="hospitalName" name="hospitalName" required placeholder="例如：臺北榮民總醫院">
+                </div>
+
+                <div class="form-group">
+                    <label for="foundingYear">成立年份:</label>
+                    <input type="number" id="foundingYear" name="foundingYear" min="1900" max="2023" required
+                        placeholder="例如：1958">
+                </div>
+
+                <div class="form-group">
+                    <label for="openingYear">開業年份 (若與成立年份不同):</label>
+                    <input type="number" id="openingYear" name="openingYear" min="1900" max="2023"
+                        placeholder="例如：1960">
+                </div>
+
+                <div class="form-group">
+                    <label>重要里程碑:</label>
+                    <div id="milestones-container">
+                        <div class="milestone-entry">
+                            <input type="number" name="milestoneYear[]" placeholder="年份" min="1900" max="2023">
+                            <input type="text" name="milestoneDesc[]" placeholder="例如：升格為醫學中心、完成第一例器官移植手術">
+                            <button type="button" class="remove-btn" style="display: none;">移除</button>
+                        </div>
+                    </div>
+                    <button type="button" id="add-milestone" class="add-btn">+ 新增里程碑</button>
+                </div>
+
+                <div class="form-group">
+                    <label for="medicalCenterYear">升格醫學中心年份 (若適用):</label>
+                    <input type="number" id="medicalCenterYear" name="medicalCenterYear" min="1900" max="2023"
+                        placeholder="例如：2000">
+                </div>
+
+                <div class="form-group">
+                    <label for="employeeCount">員工人數: <span class="standard-badge">GRI 2-7</span></label>
+                    <input type="number" id="employeeCount" name="employeeCount" min="1" required placeholder="例如：5500">
+                    <small class="helper-text">依據GRI 2-7要求提供工作者相關資訊</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="bedCount">病床數: <span class="standard-badge">HC-DY-000.A</span></label>
+                    <input type="number" id="bedCount" name="bedCount" min="1" required placeholder="例如：3000">
+                    <small class="helper-text">SASB HC-DY-000.A要求按服務類型提供床位數量</small>
+                </div>
+
+                <div class="form-group">
+                    <label>床位細分 (按服務類型): <span class="standard-badge">HC-DY-000.A</span></label>
+                    <div class="bed-types">
+                        <div>
+                            <label for="generalBeds">一般病床:</label>
+                            <input type="number" id="generalBeds" name="generalBeds" min="0" placeholder="例如：2000">
+                        </div>
+                        <div>
+                            <label for="icuBeds">加護病床:</label>
+                            <input type="number" id="icuBeds" name="icuBeds" min="0" placeholder="例如：200">
+                        </div>
+                        <div>
+                            <label for="isolationBeds">隔離病床:</label>
+                            <input type="number" id="isolationBeds" name="isolationBeds" min="0" placeholder="例如：50">
+                        </div>
+                        <div>
+                            <label for="hospiceBeds">安寧病床:</label>
+                            <input type="number" id="hospiceBeds" name="hospiceBeds" min="0" placeholder="例如：20">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>年度服務量: <span class="standard-badge">HC-DY-000.B</span></label>
+                    <small class="helper-text">SASB HC-DY-000.B要求按服務類型提供服務量數據</small>
+                    <div class="service-stats">
+                        <div>
+                            <label for="outpatientCount">門診人次:</label>
+                            <input type="number" id="outpatientCount" name="outpatientCount" min="0"
+                                placeholder="例如：2,500,000">
+                        </div>
+                        <div>
+                            <label for="emergencyCount">急診人次:</label>
+                            <input type="number" id="emergencyCount" name="emergencyCount" min="0"
+                                placeholder="例如：120,000">
+                        </div>
+                        <div>
+                            <label for="inpatientCount">住院人次:</label>
+                            <input type="number" id="inpatientCount" name="inpatientCount" min="0"
+                                placeholder="例如：80,000">
+                        </div>
+                        <div>
+                            <label for="surgeryCount">手術人次:</label>
+                            <input type="number" id="surgeryCount" name="surgeryCount" min="0" placeholder="例如：60,000">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="prev-btn">上一步</button>
+                    <button type="button" class="next-btn">下一步</button>
+                </div>
+            </div>
+
+            <!-- 第3頁：醫院使命、願景與價值觀 (GRI 2-12) -->
+            <div class="form-page" id="page3">
+                <h2>醫院使命、願景與價值觀 <span class="standard-badge">GRI 2-12</span></h2>
+                <p class="section-description">依據GRI 2-12標準說明最高治理單位在監督組織目的、價值觀和策略方面的角色</p>
+
+                <div class="form-group">
+                    <label for="mission">宗旨/使命:</label>
+                    <textarea id="mission" name="mission" rows="3" required
+                        placeholder="例如：促進人類健康基本人權，致力於提供高品質醫療服務，守護全民健康，成為病人與家屬可信賴的健康守護者"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="vision">願景:</label>
+                    <textarea id="vision" name="vision" rows="3" required
+                        placeholder="例如：成為世界一流的中、西醫學中心，致力推動醫療創新，引領亞太地區醫療服務與教育研究，提供卓越照護"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>核心價值觀: <span class="standard-badge">GRI 2-23</span></label>
+                    <small class="helper-text">依據GRI 2-23標準說明組織的政策承諾</small>
+                    <div id="values-container">
+                        <div class="value-entry">
+                            <input type="text" name="valueTitle[]" placeholder="標題，例如：以病人為尊" required>
+                            <textarea name="valueDesc[]" placeholder="簡短說明，例如：尊重每位病人的尊嚴與權利，視病人為醫療服務的核心"
+                                rows="2"></textarea>
+                            <button type="button" class="remove-btn" style="display: none;">移除</button>
+                        </div>
+                    </div>
+                    <button type="button" id="add-value" class="add-btn">+ 新增核心價值</button>
+                    <small class="helper-text">建議核心價值：以病人為尊、以員工為重、以醫院為榮、專業卓越、團隊合作、創新突破、社會責任</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="sustainability-commitment">永續發展承諾: <span class="standard-badge">GRI 2-22</span></label>
+                    <textarea id="sustainability-commitment" name="sustainability-commitment" rows="4"
+                        placeholder="例如：本院致力推動綠色醫院與永續發展，以「健康、關懷、創新、卓越」為核心，推動低碳醫療環境，實踐社會公平，提升治理透明度，創造共享價值，為地球與人類健康作出貢獻"></textarea>
+                    <small class="helper-text">依據GRI 2-22標準提供永續發展策略的聲明</small>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="prev-btn">上一步</button>
+                    <button type="button" class="next-btn">下一步</button>
+                </div>
+            </div>
+
+            <!-- 第4頁：重大成就與認證 -->
+            <div class="form-page" id="page4">
+                <h2>重大成就與認證 <span class="standard-badge">GRI 2-28</span></h2>
+                <p class="section-description">依據GRI 2-28標準提供組織參與的協會與認證資訊</p>
+
+                <div class="form-group">
+                    <label>數位醫療成就: <span class="standard-badge">HC-DY-250</span></label>
+                    <small class="helper-text">與SASB HC-DY-250相關的醫療信息安全與創新</small>
+                    <div id="digital-achievements-container">
+                        <div class="achievement-entry">
+                            <input type="text" name="digitalAchievement[]" placeholder="例如：導入AI輔助診斷系統" required>
+                            <input type="text" name="digitalAchievementYear[]" placeholder="年份，例如：2022">
+                            <button type="button" class="remove-btn" style="display: none;">移除</button>
+                        </div>
+                    </div>
+                    <button type="button" id="add-digital-achievement" class="add-btn">+ 新增數位醫療成就</button>
+                </div>
+
+                <div class="form-group">
+                    <label>醫療品質認證:</label>
+                    <div id="quality-certifications-container">
+                        <div class="certification-entry">
+                            <input type="text" name="qualityCertification[]" placeholder="例如：JCI國際醫療認證" required>
+                            <input type="text" name="certificationDetails[]" placeholder="獲得級別/數量，例如：全院認證">
+                            <button type="button" class="remove-btn" style="display: none;">移除</button>
+                        </div>
+                    </div>
+                    <button type="button" id="add-certification" class="add-btn">+ 新增醫療品質認證</button>
+                    <small class="helper-text">如：JCI國際醫療認證、醫院評鑑優等、SNQ國家品質標章、國家醫療品質獎</small>
+                </div>
+
+                <div class="form-group">
+                    <label>創新研發成果:</label>
+                    <div id="innovation-results-container">
+                        <div class="innovation-entry">
+                            <input type="text" name="innovationResult[]" placeholder="例如：發展新型癌症免疫治療技術" required>
+                            <input type="text" name="innovationDetails[]" placeholder="詳細資訊，例如：提高治療成功率30%">
+                            <button type="button" class="remove-btn" style="display: none;">移除</button>
+                        </div>
+                    </div>
+                    <button type="button" id="add-innovation" class="add-btn">+ 新增創新研發成果</button>
+                </div>
+
+                <div class="form-group">
+                    <label>其他重要獎項與認證:</label>
+                    <div id="other-awards-container">
+                        <div class="award-entry">
+                            <input type="text" name="otherAward[]" placeholder="例如：國家新創精進獎">
+                            <input type="text" name="awardYear[]" placeholder="年份，例如：2022">
+                            <button type="button" class="remove-btn" style="display: none;">移除</button>
+                        </div>
+                    </div>
+                    <button type="button" id="add-award" class="add-btn">+ 新增獎項/認證</button>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="prev-btn">上一步</button>
+                    <button type="button" class="next-btn">下一步</button>
+                </div>
+            </div>
+
+            <!-- 第5頁：組織架構 (GRI 2-9) -->
+            <div class="form-page" id="page5">
+                <h2>組織架構 <span class="standard-badge">GRI 2-9</span></h2>
+                <p class="section-description">依據GRI 2-9標準描述組織的治理結構與組成</p>
+
+                <div class="form-group">
+                    <label>部門結構:</label>
+                    <div class="department-stats">
+                        <div>
+                            <label for="medicalDeptCount">醫療部門數量:</label>
+                            <input type="number" id="medicalDeptCount" name="medicalDeptCount" min="0"
+                                placeholder="例如：34">
+                        </div>
+                        <div>
+                            <label for="technicalDeptCount">醫技部門數量:</label>
+                            <input type="number" id="technicalDeptCount" name="technicalDeptCount" min="0"
+                                placeholder="例如：5">
+                        </div>
+                        <div>
+                            <label for="nursingDeptCount">護理部門數量:</label>
+                            <input type="number" id="nursingDeptCount" name="nursingDeptCount" min="0"
+                                placeholder="例如：1">
+                        </div>
+                        <div>
+                            <label for="researchDeptCount">研究部門數量:</label>
+                            <input type="number" id="researchDeptCount" name="researchDeptCount" min="0"
+                                placeholder="例如：2">
+                        </div>
+                        <div>
+                            <label for="adminDeptCount">行政部門數量:</label>
+                            <input type="number" id="adminDeptCount" name="adminDeptCount" min="0" placeholder="例如：14">
+                        </div>
+                        <div>
+                            <label for="otherDeptCount">其他部門數量:</label>
+                            <input type="number" id="otherDeptCount" name="otherDeptCount" min="0" placeholder="例如：3">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="committeeCount">委員會總數量: <span class="standard-badge">GRI 2-9</span></label>
+                    <input type="number" id="committeeCount" name="committeeCount" min="0" placeholder="例如：48">
+                    <small class="helper-text">醫院內部重要委員會總數</small>
+                </div>
+
+                <div class="form-group">
+                    <label>委員會分類:</label>
+                    <div id="committee-categories-container">
+                        <div class="committee-entry">
+                            <input type="text" name="committeeCategory[]" placeholder="功能類別，例如：醫療照護類">
+                            <input type="number" name="categoryCount[]" placeholder="數量，例如：19" min="0">
+                            <button type="button" class="remove-btn" style="display: none;">移除</button>
+                        </div>
+                    </div>
+                    <button type="button" id="add-committee" class="add-btn">+ 新增委員會類別</button>
+                    <small class="helper-text">如：醫療照護類、教學研究類、爭論與倫理類、健康促進類、安全管理類等</small>
+                </div>
+
+                <div class="form-group">
+                    <label>產學合作關係: <span class="standard-badge">GRI 2-28</span></label>
+                    <small class="helper-text">依據GRI 2-28標準說明組織參與的協會</small>
+                    <div id="collaborations-container">
+                        <div class="collaboration-entry">
+                            <input type="text" name="collaborationPartner[]" placeholder="合作夥伴，例如：台灣大學醫學院">
+                            <input type="text" name="collaborationField[]" placeholder="合作領域，例如：臨床試驗研究">
+                            <button type="button" class="remove-btn" style="display: none;">移除</button>
+                        </div>
+                    </div>
+                    <button type="button" id="add-collaboration" class="add-btn">+ 新增合作關係</button>
+                </div>
+
+                <div class="form-group">
+                    <label>外部協會參與: <span class="standard-badge">GRI 2-28</span></label>
+                    <div id="associations-container">
+                        <div class="association-entry">
+                            <input type="text" name="associationName[]" placeholder="協會名稱，例如：台灣醫院協會">
+                            <input type="text" name="associationRole[]" placeholder="擔任角色，例如：理事長">
+                            <button type="button" class="remove-btn" style="display: none;">移除</button>
+                        </div>
+                    </div>
+                    <button type="button" id="add-association" class="add-btn">+ 新增協會參與</button>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="prev-btn">上一步</button>
+                    <button type="button" id="generate-report" class="submit-btn">生成報告</button>
+                </div>
+            </div>
+        </form>
+
+        <div id="report-output" style="display: none;">
+            <h2>生成的ESG報告關鍵內容</h2>
+            <div class="report-actions">
+                <button id="edit-report" class="edit-btn">編輯資訊</button>
+                <button id="download-report" class="download-btn">下載報告</button>
+                <button id="copy-report" class="copy-btn">複製內容</button>
+            </div>
+            <div id="report-content" class="report-preview"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>醫院ESG報告生成器 © 2025</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

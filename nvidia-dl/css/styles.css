@@ -1,0 +1,346 @@
+/* 定義變數，提高可維護性 */
+:root {
+    --primary-color:
+        #007bff;
+    --light-bg:
+        #f8f9fa;
+    --text-color: #333;
+    --border-color: #666;
+}
+
+/* 1. 側邊欄樣式（已移除收合功能） */
+/* 修改側邊欄樣式 */
+.sidebar {
+    width: 100%;
+    /* 改為 100% 以配合 Bootstrap grid */
+    background-color: var(--light-bg);
+    padding: 20px;
+    height: 100vh;
+    position: sticky;
+    /* 改用 sticky 定位 */
+    top: 0;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar .nav-link {
+    color: var(--text-color);
+    font-weight: bold;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+.sidebar .nav-link:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* 2. 主要內容區 /
+/ 添加新的通用容器樣式 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 添加內容區域的基本樣式 */
+.col-md-9.col-lg-10 {
+    background-color: white;
+}
+
+/* 3. 圖片畫廊 */
+.image-gallery {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.image-gallery-row {
+    display: flex;
+    flex-wrap: wrap;
+    /* 允許換行 /
+    gap: 10px; / 減少間距，使圖片更緊密 /
+    justify-content: flex-start; / 讓圖片靠左排列 */
+    align-items: flex-start;
+    padding: 10px;
+}
+
+/* 圖片區塊 */
+.image-gallery-item {
+    flex: 1 1 auto;
+    /* 讓每個圖片項目佔據可用空間 */
+    max-width: calc(20% - 10px);
+    /*讓每列最多容納 5 張圖片 */
+    min-width: 180px;
+    /* 設定最小寬度，避免圖片太小 **/
+    background-color: var(--light-bg);
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* 4. 圖片容器 */
+.image-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 0px;
+    /* 為下方內容預留空間 */
+}
+
+.image-row {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
+[data-image-container] {
+    flex: 0 0 calc(25% - 15px);
+    aspect-ratio: 4/3;
+    /* 固定寬高比 /
+    height: auto; / 移除固定高度 */
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* 保持圖片比例 */
+}
+
+/* 5. Notebook 連結 */
+.notebook-links {
+    background-color:
+        #f1f1f1;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 5px;
+    border-left: 5px solid var(--primary-color);
+}
+
+/* 6. Modal 樣式 */
+.modal-dialog.modal-lg {
+    max-width: 90vw;
+}
+
+.modal-body img {
+    max-height: 80vh;
+    width: auto;
+}
+
+/* 7. 圖片樣式 */
+.thumbnail-wrapper {
+    display: flex;
+    flex-direction: column;
+    /* 垂直排列圖片和caption */
+    align-items: center;
+}
+
+.thumbnail-wrapper:hover {
+    transform: scale(1.02);
+}
+
+.thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 圖片說明文字 */
+.figure-caption {
+    position: static;
+    /* 改回正常文檔流 */
+    margin-top: 10px;
+    font-size: 11px;
+    text-align: center;
+}
+
+/* 圖片點擊放大效果 */
+.modal-image {
+    cursor: default;
+    /* 移除放大鏡游標 */
+    transition: transform 0.3s ease-in-out;
+}
+
+.modal-image.zoomed {
+    transform: scale(1.5);
+    cursor: default;
+}
+
+/* 讓章節的子選單預設隱藏 */
+.chapter-submenu {
+    display: none;
+    transition: all 0.3s ease-in-out;
+}
+
+/* 當 .active 被添加時，展開 */
+.chapter-submenu.active {
+    display: block;
+}
+
+/* 在 styles.css 新增 */
+
+/* 定義標題字體 */
+h1,
+h2,
+h3,
+.chapter-title,
+.sidebar h2,
+.card-title {
+    font-family: "PingFang TC", "Microsoft JhengHei", "微軟正黑體", sans-serif;
+    font-weight: 500;
+    /* 適中的粗細 */
+    letter-spacing: 1px;
+    /* 加大字距 */
+}
+
+/* 特別針對大標題的樣式 */
+h1,
+h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+/* 側邊欄標題樣式 */
+.sidebar h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* 在 styles.css 中添加 */
+.row {
+    margin-left: -8px;
+    /* 減少左邊距 */
+    margin-right: -8px;
+    /* 減少右邊距 */
+}
+
+.col-lg-6 {
+    padding-left: 8px;
+    /* 減少列間距 /
+    padding-right: 8px;  / 減少列間距 */
+}
+
+.btn-group-download {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.btn i {
+    margin-right: 0.5rem;
+}
+
+.hover-effect {
+    transition: transform 0.2s ease;
+}
+
+.hover-effect:hover {
+    transform: translateY(-5px);
+}
+
+/* 確保卡片內的按鈕點擊不受影響 */
+.card-body .d-flex {
+    position: relative;
+    z-index: 2;
+}
+
+.text-decoration-none {
+    color: inherit !important;
+}
+
+.text-decoration-none:hover {
+    color: inherit !important;
+}
+
+/* 修正下拉選單問題 */
+.dropdown {
+    position: relative !important;
+    z-index: 9999 !important;
+    /* 提高z-index確保在其他元素之上 */
+}
+
+.dropdown-menu {
+    position: absolute !important;
+    min-width: 250px !important;
+    /* 確保足夠寬度顯示內容 */
+    z-index: 10000 !important;
+    /* 比dropdown本身更高的z-index */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2) !important;
+    /* 添加陰影增強可見性 */
+    overflow: visible !important;
+    /* 確保內容不被截斷 */
+    max-height: none !important;
+    /* 移除最大高度限制 */
+}
+
+/* 修正卡片容器可能的溢出問題 */
+.card-container {
+    overflow: visible !important;
+    /* 確保下拉選單不被截斷 */
+}
+
+.card-wrapper {
+    overflow: visible !important;
+}
+
+.card {
+    overflow: visible !important;
+}
+
+.card-body {
+    overflow: visible !important;
+}
+
+/* 確保所有可能導致溢出的容器都設置為可見 */
+.container,
+.container-fluid,
+.row,
+main {
+    overflow: visible !important;
+}
+
+/* 確保Colab按鈕及其下拉選單顯示完整 */
+.btn-group {
+    position: relative !important;
+    z-index: 9000 !important;
+    overflow: visible !important;
+}
+
+.btn-group .dropdown-toggle::after {
+    display: inline-block !important;
+}
+
+.btn-group.show .dropdown-menu {
+    display: block !important;
+}
+
+/* 確保卡片內容不會隱藏下拉選單 */
+.card-footer {
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* 如果需要額外的頁尾空間 */
+body::after {
+    content: "";
+    display: block;
+    height: 2em;
+    /* 約一行文字高度 */
+    width: 100%;
+}
+
+/* 響應式調整 /
+/ 調整響應式設計 */
+@media (max-width: 768px) {
+    .sidebar {
+        height: auto;
+        position: relative;
+    }
+
+    .container {
+        padding: 15px;
+    }
+}

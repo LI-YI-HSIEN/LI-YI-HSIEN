@@ -1,0 +1,340 @@
+<!-- /chapters/chapter8.html -->
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attention與Self-attention</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link href="../css/styles.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="../js/sidebar-data.js"></script>
+    <script src="../js/sidebar.js"></script>
+    <script src="../js/image-handler.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    <style>
+        /* 最高優先級的選擇器 */
+        div.container>section>h2,
+        div.container>section>h3 {
+            font-family: "PingFang TC", "Microsoft JhengHei", "微軟正黑體", sans-serif !important;
+            font-weight: 500 !important;
+            letter-spacing: 1px !important;
+        }
+
+        /* 主標題 */
+        div.container>section>h2 {
+            font-size: 2rem !important;
+            color: #333 !important;
+            margin-bottom: 1.5rem !important;
+        }
+
+        /* 次標題 */
+        div.container>section>h3 {
+            font-size: 1.5rem !important;
+            color: #333 !important;
+            margin-top: 2rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        /* 針對所有標題的通用樣式 */
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: "PingFang TC", "Microsoft JhengHei", "微軟正黑體", sans-serif !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 側邊欄 -->
+            <aside id="sidebar-placeholder" class="col-md-3 col-lg-2 p-0">
+            </aside>
+
+            <!-- 主要內容區 -->
+            <main class="col-md-9 col-lg-10 p-4">
+                <div class="container">
+                    <section id="chapter2">
+                        <h2>2. 梯度下降法與反向傳播</h2>
+                        <div class="alert alert-info mt-3">
+                            <p>本章重點：</p>
+                            <ul>
+                                <li>理解梯度下降法的數學基礎與優化原理</li>
+                                <li>掌握反向傳播演算法的核心計算過程</li>
+                                <li>了解如何選擇合適的激活函數支援神經網路訓練</li>
+                            </ul>
+                            <!-- 添加下載按鈕區域 -->
+                        </div>
+                    </section>
+
+                    <section id="derivatives-basics">
+                        <h3>2.1 導數的基礎概念</h3>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h4>導數與偏導數</h4>
+                                <ul>
+                                    <li>導數的定義
+                                        <ul>
+                                            <li>x的微小變動所導致的y值變化之比率</li>
+                                            <li>基本表示法：
+                                                <div class="card bg-light my-2 p-2">
+                                                    <div class="math text-center">
+                                                        $$\frac{dy}{dx}$$
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>導數的幾何意義是函數在某點的切線斜率</li>
+                                        </ul>
+                                    </li>
+                                    <li>偏導數的概念
+                                        <ul>
+                                            <li>多變量函數中，對單一變量的導數</li>
+                                            <li>計算時將其他變量視為常數</li>
+                                            <li>兩個變量X0、X1的表示方式：
+                                                <div class="card bg-light my-2 p-2">
+                                                    <div class="math text-center">
+                                                        $$\frac{\partial y}{\partial x_0} 和 \frac{\partial y}{\partial
+                                                        x_1}$$
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+
+                                <h4>梯度(Gradient)</h4>
+                                <ul>
+                                    <li>定義與特性
+                                        <ul>
+                                            <li>各偏導數組成的向量</li>
+                                            <li>表示方式：
+                                                <div class="card bg-light my-2 p-2">
+                                                    <div class="math text-center">
+                                                        $$\nabla y = \left( \frac{\partial y}{\partial x_0},
+                                                        \frac{\partial y}{\partial x_1}, \ldots, \frac{\partial
+                                                        y}{\partial x_n} \right)$$
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>幾何意義
+                                        <ul>
+                                            <li>指向函數值增加最快的方向</li>
+                                            <li>梯度大小代表該方向的斜率</li>
+                                            <li>在任一點，沿梯度方向移動可使函數值增幅最大</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="image-container">
+                                    <div class="image-row">
+                                        <div data-image-container data-image-id="2-1" data-chapter="chapter2"
+                                            data-filename="2-1-function-derivatives.png" data-alt="函數導數與切線"
+                                            data-figure-number="2-1" data-caption="函數曲線與切線"
+                                            data-description="函數y=f(x)的曲線上三點的切線示意圖，中間點為函數最小值處，導數為0">
+                                        </div>
+                                        <div data-image-container data-image-id="2-2" data-chapter="chapter2"
+                                            data-filename="2-2-multivariable-function.png" data-alt="雙變量函數圖示"
+                                            data-figure-number="2-2" data-caption="雙變量函數示意圖"
+                                            data-description="y=f(x₀,x₁)的雙變量函數三維圖示，顯示峰谷起伏的曲面，箭頭表示各點的梯度向量方向及大小">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="gradient-descent">
+                        <h3>2.2 梯度下降法</h3>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h4>基本概念</h4>
+                                <ul>
+                                    <li>目標與應用
+                                        <ul>
+                                            <li>尋找損失函數的最小值</li>
+                                            <li>逐步調整權重參數以最小化誤差</li>
+                                            <li>常用均方誤差(MSE)作為損失函數：
+                                                <div class="card bg-light my-2 p-2">
+                                                    <div class="math text-center">
+                                                        $$E = \frac{1}{m} \sum_{i=1}^{m} (y_i - \hat{y}_i)^2$$
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>迭代公式
+                                        <ul>
+                                            <li>權重更新方式：
+                                                <div class="card bg-light my-2 p-2">
+                                                    <div class="math text-center">
+                                                        $$w_{new} = w_{old} - \eta \nabla E(w)$$
+                                                    </div>
+                                                    <small class="text-muted text-center">其中 η 為學習率</small>
+                                                </div>
+                                            </li>
+                                            <li>學習率的影響
+                                                <ul>
+                                                    <li>過大：可能導致震盪而無法收斂</li>
+                                                    <li>過小：收斂速度慢且可能陷入局部最小值</li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+
+                                <h4>多維優化</h4>
+                                <ul>
+                                    <li>多參數優化
+                                        <ul>
+                                            <li>雙變量函數的梯度下降：
+                                                <div class="card bg-light my-2 p-2">
+                                                    <div class="math text-center">
+                                                        $$w_0 = w_0 - \eta \frac{\partial E}{\partial w_0}$$
+                                                        $$w_1 = w_1 - \eta \frac{\partial E}{\partial w_1}$$
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>推廣到n維向量形式：
+                                                <div class="card bg-light my-2 p-2">
+                                                    <div class="math text-center">
+                                                        $$\vec{w} = \vec{w} - \eta \nabla E$$
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>收斂過程
+                                        <ul>
+                                            <li>從初始點出發，沿梯度反方向移動</li>
+                                            <li>梯度逐漸減小，調整量也隨之減小</li>
+                                            <li>最終收斂於損失函數的(局部)最小值</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="image-container">
+                                    <div class="image-row">
+                                        <div data-image-container data-image-id="2-3" data-chapter="chapter2"
+                                            data-filename="2-3-gradient-descent.png" data-alt="梯度下降優化過程"
+                                            data-figure-number="2-3" data-caption="梯度下降尋找最小值"
+                                            data-description="從初始權重w₀出發，經過多次迭代①②③，沿梯度反方向調整，最終逼近損失函數的最小值">
+                                        </div>
+                                        <div data-image-container data-image-id="2-4" data-chapter="chapter2"
+                                            data-filename="2-4-2d-gradient-descent.png" data-alt="二維梯度下降優化"
+                                            data-figure-number="2-4" data-caption="雙變量函數的梯度下降"
+                                            data-description="梯度下降路徑，從點1經過點2到達點3，函數值E逐步降低">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="backpropagation">
+                        <h3>2.3 反向傳播</h3>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h4>激活函數的選擇</h4>
+                                <ul>
+                                    <li>可微分性要求
+                                        <ul>
+                                            <li>梯度下降法要求函數可微分</li>
+                                            <li>符號函數在原點不連續，不適合用於反向傳播</li>
+                                            <li>建議使用S形函數(Sigmoid類函數)</li>
+                                        </ul>
+                                    </li>
+                                    <li>常用激活函數
+                                        <ul>
+                                            <li>雙曲正切(tanh)函數：
+                                                <div class="card bg-light my-2 p-2">
+                                                    <div class="math text-center">
+                                                        $$\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$$
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>Sigmoid函數：
+                                                <div class="card bg-light my-2 p-2">
+                                                    <div class="math text-center">
+                                                        $$\sigma(x) = \frac{1}{1 + e^{-x}}$$
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>隱藏層建議使用tanh，輸出層適合用Sigmoid</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+
+                                <h4>反向傳播原理</h4>
+                                <ul>
+                                    <li>基本概念
+                                        <ul>
+                                            <li>基於連鎖法則計算複合函數的偏導數</li>
+                                            <li>從輸出層逐層向後計算梯度</li>
+                                            <li>高效利用中間計算結果，減少重複運算</li>
+                                        </ul>
+                                    </li>
+                                    <li>計算流程
+                                        <ul>
+                                            <li>前向傳播：計算各層輸出值</li>
+                                            <li>計算輸出層的損失項</li>
+                                            <li>反向傳播損失：計算各層神經元的損失項</li>
+                                            <li>計算各權重的梯度：損失項乘以對應的輸入值</li>
+                                            <li>更新權重：應用梯度下降公式</li>
+                                        </ul>
+                                    </li>
+                                    <li>擴展應用
+                                        <ul>
+                                            <li>適用於多層、多神經元的複雜網路</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="image-container">
+                                    <div class="image-row">
+                                        <div data-image-container data-image-id="2-5" data-chapter="chapter2"
+                                            data-filename="2-5-tanh-function.png" data-alt="雙曲正切函數圖"
+                                            data-figure-number="2-5" data-caption="雙曲正切(tanh)函數"
+                                            data-description="雙曲正切函數的曲線圖，輸出範圍為-1到+1，原點處斜率為1">
+                                        </div>
+                                        <div data-image-container data-image-id="2-6" data-chapter="chapter2"
+                                            data-filename="2-6-sigmoid-function.png" data-alt="Sigmoid函數圖"
+                                            data-figure-number="2-6" data-caption="Sigmoid函數"
+                                            data-description="Sigmoid函數的曲線圖，輸出範圍為0到1，在x=0處輸出值為0.5">
+                                        </div>
+                                        <div data-image-container data-image-id="2-7" data-chapter="chapter2"
+                                            data-filename="2-7-simple-network.png" data-alt="簡單神經網路示意圖"
+                                            data-figure-number="2-7" data-caption="簡單雙層神經網路"
+                                            data-description="包含神經元G(使用tanh激活)和F(使用Sigmoid激活)的雙層網路，右側虛線圓圈表示損失函數">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                </div> <!-- 關閉 <div class="container"> -->
+            </main> <!-- 關閉 <main> -->
+        </div> <!-- 關閉 <div class="row"> -->
+    </div> <!-- 關閉 <div class="container-fluid"> -->
+
+
+    <script src="../js/sidebar-data.js"></script>
+    <script src="../js/sidebar.js"></script>
+    <script src="../js/image-handler.js"></script>
+</body>
+
+</html>

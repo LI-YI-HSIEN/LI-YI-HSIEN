@@ -1,0 +1,305 @@
+/* 完整的緊湊版CSS */
+:root {
+    --primary-color: #1e3a8a;
+    --secondary-color: #3b82f6;
+    --accent-color: #f59e0b;
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-color: #1e293b;
+    --text-light: #64748b;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --hover-transform: translateY(-8px);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.5rem;
+}
+
+header {
+    text-align: center;
+    padding: 1rem 0.5rem;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+header p {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+/* 卡片基本樣式 - 移除固定高度 */
+.project-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* 整個卡片的連結 */
+.card-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    text-decoration: none;
+    color: inherit;
+}
+
+.project-card:hover {
+    transform: var(--hover-transform);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* 降低圖片高度 */
+.card-img {
+    height: 280px;
+    overflow: hidden;
+    position: relative;
+    background-color: #f0f4f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-img img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: var(--transition);
+}
+
+.project-card:hover .card-img img {
+    transform: scale(1.02);
+}
+
+/* 卡片內容結構 */
+.card-content {
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 頂部內容區 - 減少間距 */
+.card-top {
+    margin-bottom: 10px;
+}
+
+.card-tag {
+    display: inline-block;
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--secondary-color);
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* 減小標題尺寸 */
+.card-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.6rem;
+    color: var(--primary-color);
+}
+
+/* 調整描述區域 */
+.card-description {
+    color: var(--text-light);
+    margin-bottom: 10px;
+    min-height: 40px;
+    line-height: 1.4;
+}
+
+/* 縮小空白區域 */
+.spacer {
+    height: 15px;
+}
+
+/* 影片區域樣式調整 */
+.video-links {
+    margin-bottom: 5px;
+    position: relative;
+    z-index: 2;
+}
+
+.video-links p {
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+    color: var(--text-color);
+}
+
+.video-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* 縮小視頻按鈕 */
+.video-btn {
+    display: inline-block;
+    width: 157px;
+    text-align: center;
+    background-color: #f44336;
+    color: white;
+    padding: 0.5rem 0.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    margin-bottom: 3px;
+}
+
+.video-btn:hover {
+    background-color: #cc0000;
+    transform: translateY(-2px);
+}
+
+.video-btn svg {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+/* 按鈕區域樣式 */
+.button-area {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.equal-width {
+    flex: 1;
+    box-sizing: border-box;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.single-btn {
+    width: 100%;
+    display: block;
+}
+
+/* 調整卡片按鈕 */
+.card-btn {
+    display: inline-block;
+    background-color: var(--secondary-color);
+    color: white;
+    text-decoration: none;
+    padding: 0.7rem 0.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    text-align: center;
+    transition: var(--transition);
+    position: relative;
+    z-index: 2;
+}
+
+.card-btn:hover {
+    background-color: var(--primary-color);
+}
+
+/* 卡片點擊指示器 */
+.project-card::after {
+    content: '';
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 30px;
+    height: 30px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3E%3Cpath d='M14 5l7 7m0 0l-7 7m7-7H3'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.6;
+    transition: var(--transition);
+    z-index: 1;
+}
+
+.project-card:hover::after {
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+footer {
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--text-light);
+    border-top: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .projects {
+        grid-template-columns: 1fr;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .card-img {
+        height: 200px;
+    }
+
+    .card-description {
+        min-height: auto;
+    }
+
+    .spacer {
+        height: 10px;
+    }
+
+    .video-buttons {
+        flex-direction: column;
+    }
+
+    .button-container {
+        flex-direction: column;
+    }
+
+    .card-content {
+        padding: 1.2rem;
+    }
+}
